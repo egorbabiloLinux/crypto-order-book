@@ -21,7 +21,7 @@ type DBConfig struct {
 }
 
 type HTTPServer struct {
-	Address 	string `mapstructure:"address" validate:"required"`
+	Address 	string `mapstructure:"addr" validate:"required"`
 	Timeout 	string `mapstructre:"timeout"`
 	IdleTimeout string `mapstructure:"idle_timeout"`
 }
