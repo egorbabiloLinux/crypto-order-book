@@ -1,0 +1,10 @@
+env: "local"
+app_secret: "app_secret"
+http_server: 
+  addr: "8083"
+  timeout: 4s
+  idle_timeout: 30s
+sso_server: 
+  grpc_addr: "sso-server:44044"
+  grpc_timeout: 5s
+  retries: 3
