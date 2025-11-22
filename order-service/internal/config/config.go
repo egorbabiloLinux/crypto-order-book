@@ -5,19 +5,20 @@ import (
 	"os"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
 	"go.yaml.in/yaml/v3"
 )
 
 type Config struct {
 	Env 	  string   `yaml:"env"`
-	DB 		  DBConfig `yaml:"db"`
+	DB 		  DBConfig
 	AppSecret string   `yaml:"app_secret"`
 	HTTPServer		   `yaml:"http_server"`	
 	SSOServer		   `yaml:"sso_server"`
 }
 
 type DBConfig struct {
-	URL string `yaml:"url" validate:"required"`
+	URL string `validate:"required"`
 }
 
 type HTTPServer struct {
@@ -33,6 +34,10 @@ type SSOServer struct {
 }
 
 func MustLoad() *Config {
+	err := godotenv.Load("internal/config/.env")
+	if err != nil {
+		log.Printf(".env file not found or failed to load: %v", err)
+	}
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		log.Fatal("config path variable is not set")
@@ -47,15 +52,21 @@ func MustLoad() *Config {
 		log.Fatalf("error unmarshaling config: %v", err)
 	}
 
-	var config Config
-	if err = yaml.Unmarshal(data, &config); err != nil {
+	var cfg Config
+	if err = yaml.Unmarshal(data, &cfg); err != nil {
 		log.Fatalf("error unmarshaling config: %v", err)
 	}
-	//задать значения по дефолту 
 
-	if err := validator.New().Struct(config); err != nil {
+	dbUrl := os.Getenv("DB_URL") //TODO: through envconfig
+	if dbUrl == "" {
+		log.Fatal("database url variable is not set")
+	}
+
+	cfg.DB.URL = dbUrl
+
+	if err := validator.New().Struct(cfg); err != nil {
 		log.Fatalf("error validating config: %v", err)
 	}
 
-	return &config
+	return &cfg
 }
