@@ -8,3 +8,5 @@ sso_server:
   grpc_addr: "sso-server:44044"
   grpc_timeout: 5s
   retries: 3
+db: 
+  url: "postgres://"

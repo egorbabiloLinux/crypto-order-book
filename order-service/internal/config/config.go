@@ -9,33 +9,33 @@ import (
 )
 
 type Config struct {
-	Env 	  string   `mapstructure:"env"`
-	DB 		  DBConfig `mapstructur: "db"`
-	AppSecret string   `mapstructure:"app_secret"`
-	HTTPServer		   `mapstructure:"http_server"`	
-	SSOServer		   `mapstructure:"sso_server"`
+	Env 	  string   `yaml:"env"`
+	DB 		  DBConfig `yaml:"db"`
+	AppSecret string   `yaml:"app_secret"`
+	HTTPServer		   `yaml:"http_server"`	
+	SSOServer		   `yaml:"sso_server"`
 }
 
 type DBConfig struct {
-	URL string `mapstructure:"url" validate:"required"`
+	URL string `yaml:"url" validate:"required"`
 }
 
 type HTTPServer struct {
-	Address 	string `mapstructure:"addr" validate:"required"`
-	Timeout 	string `mapstructre:"timeout"`
-	IdleTimeout string `mapstructure:"idle_timeout"`
+	Address 	string `yaml:"addr" validate:"required"`
+	Timeout 	string `yaml:"timeout"`
+	IdleTimeout string `yaml:"idle_timeout"`
 }
 
 type SSOServer struct {
-	GRPCAddr 	string `mapstructure:"grpc_addr" validate:"required"`
-	GRPCTimeout string `mapstructure:"grpc_timeout"`
-	Retries 	string `mapstructure:"retries"`
+	GRPCAddr 	string `yaml:"grpc_addr" validate:"required"`
+	GRPCTimeout string `yaml:"grpc_timeout"`
+	Retries 	string `yaml:"retries"`
 }
 
 func MustLoad() *Config {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		//log.Fatal()
+		log.Fatal("config path variable is not set")
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
