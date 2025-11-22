@@ -7,19 +7,28 @@ CREATE TYPE order_type AS ENUM ('limit', 'market');
 
 CREATE TYPE side_type AS ENUM('bid', 'ask');
 
+CREATE TYPE status_type AS ENUM('active', 'partial', 'filled', 'canceled');
+
 CREATE TABLE IF NOT EXISTS orders (
-	id 	   	   BIGSERIAL PRIMARY KEY,
-	user_id    BIGINT NOT NULL,
-	price      NUMERIC(18,8) NOT NULL,
-	amount     NUMERIC(18,8) NOT NULL,
-	remaining  NUMERIC(18,8) NOT NULL,
-	side       side_type NOT NULL,
-	type       order_type NOT NULL,
-	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+	id 	   	     BIGSERIAL 	 	 PRIMARY KEY,
+	user_id      BIGINT 		 NOT NULL,
+	price        NUMERIC(18,8) 	 NOT NULL,
+	amount       NUMERIC(18,8) 	 NOT NULL,
+	remaining    NUMERIC(18,8) 	 NOT NULL,
+	side         side_type 	 	 NOT NULL,
+	order_type   order_type 	 NOT NULL,
+	order_status status_type	 NOT NULL,
+	created_at   TIMESTAMPTZ 	 NOT NULL DEFAULT NOW(),
+	updated_at   TIMESTAMPTZ 	 NOT NULL DEFAULT NOW()
 );
 
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';
 -- +goose StatementEnd
+
+DROP TABLE orders;
+
+DROP TYPE order_type;
+DROP TYPE side_type;
+DROP TYPE status_type;

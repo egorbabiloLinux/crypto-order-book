@@ -3,7 +3,11 @@ package main
 import (
 	"log/slog"
 	"order-service/internal/config"
+	mwLogger "order-service/internal/http-server/middlware/logger"
 	"os"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const (
@@ -21,6 +25,13 @@ func main() {
 	// if err != nil {
 	// 	log.Error("failed to initialize storage", slWrap.Err(err))
 	// }
+
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(mwLogger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 }
 
 func setupLogger(env string) *slog.Logger {
