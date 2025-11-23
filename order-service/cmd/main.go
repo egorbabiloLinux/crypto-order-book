@@ -3,7 +3,9 @@ package main
 import (
 	"log/slog"
 	"order-service/internal/config"
+	"order-service/internal/http-server/handlers/place"
 	mwLogger "order-service/internal/http-server/middlware/logger"
+	"order-service/internal/storage/postgres"
 	"os"
 
 	"github.com/go-chi/chi/v5"
@@ -32,6 +34,10 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
+
+	router.Route("/order", func(r chi.Router) {
+		r.Post("/", place.New(log, postgres.NewStorageWrapper()))	
+	})
 }
 
 func setupLogger(env string) *slog.Logger {
