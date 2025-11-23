@@ -2,9 +2,11 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"order-service/internal/config"
 	"order-service/internal/http-server/handlers/place"
 	mwLogger "order-service/internal/http-server/middlware/logger"
+	"order-service/internal/lib/logger/slWrap"
 	"order-service/internal/storage/postgres"
 	"os"
 
@@ -38,6 +40,20 @@ func main() {
 	router.Route("/order", func(r chi.Router) {
 		r.Post("/", place.New(log, postgres.NewStorageWrapper()))	
 	})
+
+	server := http.Server {
+		Addr: cfg.Address,
+		Handler: router,
+		ReadTimeout: cfg.Timeout,
+		WriteTimeout: cfg.IdleTimeout,
+	}
+
+	log.Info("starting server", slog.String("port", cfg.Address))
+	if err := server.ListenAndServe(); err != nil {
+		log.Error("failed to start server", slWrap.Err(err))
+
+		return
+	}
 }
 
 func setupLogger(env string) *slog.Logger {
@@ -45,9 +61,9 @@ func setupLogger(env string) *slog.Logger {
 
 	switch env {
 	case envLocal:
-		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug, AddSource: true}))
+		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug, /* AddSource: true */}))
 	case envDev: 
-		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug, AddSource: true}))
+		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug, /* AddSource: true */}))
 	case envProd: 
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}

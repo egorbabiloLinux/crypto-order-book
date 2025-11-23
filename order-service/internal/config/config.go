@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
@@ -22,9 +23,9 @@ type DBConfig struct {
 }
 
 type HTTPServer struct {
-	Address 	string `yaml:"addr" validate:"required"`
-	Timeout 	string `yaml:"timeout"`
-	IdleTimeout string `yaml:"idle_timeout"`
+	Address 	string 		  `yaml:"addr" validate:"required"`
+	Timeout 	time.Duration `yaml:"timeout"`
+	IdleTimeout time.Duration `yaml:"idle_timeout"`
 }
 
 type SSOServer struct {
