@@ -94,7 +94,7 @@ func New(log *slog.Logger, orderSaver OrderSaver) http.HandlerFunc {
 		}
 
 		if req.Side.IsValid() {
-			log.Error("invalid order side type")
+			log.Error("invalid order side", slog.String("side", string(req.Side)))
 
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, resp.Error("invalid order side type"))
@@ -102,7 +102,7 @@ func New(log *slog.Logger, orderSaver OrderSaver) http.HandlerFunc {
 		}
 
 		if req.OrderType.IsValid() {
-			log.Error("invalid order side type")
+			log.Error("invalid order type")
 
 			render.Status(r, http.StatusBadRequest)
 			render.JSON(w, r, resp.Error("invalid order side type"))

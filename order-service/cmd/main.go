@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 	"order-service/internal/config"
+	"order-service/internal/http-server/handlers/cancel"
 	"order-service/internal/http-server/handlers/place"
 	mwLogger "order-service/internal/http-server/middlware/logger"
 	"order-service/internal/lib/logger/slWrap"
@@ -38,7 +39,8 @@ func main() {
 	router.Use(middleware.URLFormat)
 
 	router.Route("/order", func(r chi.Router) {
-		r.Post("/", place.New(log, postgres.NewStorageWrapper()))	
+		r.Post("/", place.New(log, postgres.NewStorageWrapper()))
+		r.Delete("/", cancel.New(log, postgres.NewStorageWrapper()))	
 	})
 
 	server := http.Server {
