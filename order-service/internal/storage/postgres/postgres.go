@@ -49,6 +49,6 @@ func (s *StorageWrapper) SaveOrder(
 	return 1, nil
 }
 
-func (s *StorageWrapper)DeleteOrder(orderId int64) error {
+func (s *StorageWrapper)ChangeOrderStatus(orderId int64, status order.StatusType) error {
 	return nil
 }
